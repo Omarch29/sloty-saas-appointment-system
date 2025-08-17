@@ -10,24 +10,25 @@
     "clean": "rm -rf .next dist"
   },
   "dependencies": {
+    "@sloty/auth": "file:../../packages/auth",
+    "@sloty/config": "file:../../packages/config",
+    "@sloty/db": "file:../../packages/db",
+    "@sloty/ui": "file:../../packages/ui",
+    "next": "^15.4.6",
+    "next-auth": "^4.24.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.6",
-    "@sloty/ui": "file:../../packages/ui",
-    "@sloty/auth": "file:../../packages/auth",
-    "@sloty/db": "file:../../packages/db",
-    "@sloty/config": "file:../../packages/config",
-    "next-auth": "^4.24.0"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
