@@ -3,19 +3,18 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'sloty Documentation',
-  tagline: 'Multi-tenant SaaS Appointment System',
+  title: 'Sloty Documentation',
+  tagline: 'Multi-tenant SaaS Appointment Booking System',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://omarch29.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/sloty-saas-appointment-system/',
 
   // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'your-org', // Usually your GitHub org/user name.
+  organizationName: 'Omarch29', // Usually your GitHub org/user name.
   projectName: 'sloty-saas-appointment-system', // Usually your repo name.
 
   onBrokenLinks: 'throw',
@@ -38,7 +37,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/your-org/sloty-saas-appointment-system/tree/main/apps/docs/',
+            'https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/',
         },
         theme: {
           customCss: './src/css/custom.css',
