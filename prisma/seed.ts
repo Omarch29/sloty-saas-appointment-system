@@ -11,10 +11,31 @@ async function main() {
     update: {},
     create: {
       id: 'demo-tenant-id',
-      name: 'Demo Clinic',
+      name: 'Demo Medical Clinic',
+      legalName: 'Demo Medical Clinic LLC',
+      billingEmail: 'billing@democlinic.com',
       timezone: 'America/New_York',
       defaultCurrency: 'USD',
       status: 'active',
+    },
+  })
+
+  // Create a demo admin user
+  const adminUser = await prisma.user.upsert({
+    where: { 
+      tenantId_email: {
+        tenantId: demoTenant.id,
+        email: 'admin@democlinic.com'
+      }
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      email: 'admin@democlinic.com',
+      firstName: 'Admin',
+      lastName: 'User',
+      role: 'admin',
+      isActive: true,
     },
   })
 
@@ -26,11 +47,13 @@ async function main() {
       id: 'demo-location-id',
       tenantId: demoTenant.id,
       name: 'Main Office',
-      address: '123 Demo Street, Demo City, DC 12345',
-      phone: '(555) 123-4567',
-      email: 'info@democlinic.com',
+      addressLine1: '123 Demo Street',
+      city: 'Demo City',
+      region: 'DC',
+      postalCode: '12345',
+      countryCode: 'US',
       timezone: 'America/New_York',
-      status: 'active',
+      isActive: true,
     },
   })
 
@@ -43,7 +66,7 @@ async function main() {
       tenantId: demoTenant.id,
       name: 'General Medicine',
       description: 'General medical consultations and check-ups',
-      status: 'active',
+      isActive: true,
     },
   })
 
@@ -55,74 +78,150 @@ async function main() {
       tenantId: demoTenant.id,
       name: 'Dentistry',
       description: 'Dental care and oral health services',
-      status: 'active',
+      isActive: true,
     },
   })
 
-  // Create providers
-  const drSmith = await prisma.person.upsert({
-    where: { id: 'dr-smith-id' },
+  // Create people (providers and customers)
+  const drSmithPerson = await prisma.person.upsert({
+    where: { id: 'dr-smith-person-id' },
     update: {},
     create: {
-      id: 'dr-smith-id',
+      id: 'dr-smith-person-id',
       tenantId: demoTenant.id,
-      type: 'provider',
       firstName: 'John',
       lastName: 'Smith',
       email: 'dr.smith@democlinic.com',
       phone: '(555) 123-4568',
-      status: 'active',
     },
   })
 
-  const drJohnson = await prisma.person.upsert({
-    where: { id: 'dr-johnson-id' },
+  const drJohnsonPerson = await prisma.person.upsert({
+    where: { id: 'dr-johnson-person-id' },
     update: {},
     create: {
-      id: 'dr-johnson-id',
+      id: 'dr-johnson-person-id',
       tenantId: demoTenant.id,
-      type: 'provider',
       firstName: 'Sarah',
       lastName: 'Johnson',
       email: 'dr.johnson@democlinic.com',
       phone: '(555) 123-4569',
-      status: 'active',
+    },
+  })
+
+  const clientPerson = await prisma.person.upsert({
+    where: { id: 'demo-client-person-id' },
+    update: {},
+    create: {
+      id: 'demo-client-person-id',
+      tenantId: demoTenant.id,
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'jane.doe@email.com',
+      phone: '(555) 987-6543',
+    },
+  })
+
+  // Create providers
+  const drSmithProvider = await prisma.provider.upsert({
+    where: { id: drSmithPerson.id },
+    update: {},
+    create: {
+      id: drSmithPerson.id,
+      tenantId: demoTenant.id,
+      displayName: 'Dr. John Smith',
+      licenseNumber: 'MD12345',
+      isActive: true,
+    },
+  })
+
+  const drJohnsonProvider = await prisma.provider.upsert({
+    where: { id: drJohnsonPerson.id },
+    update: {},
+    create: {
+      id: drJohnsonPerson.id,
+      tenantId: demoTenant.id,
+      displayName: 'Dr. Sarah Johnson',
+      licenseNumber: 'DDS67890',
+      isActive: true,
+    },
+  })
+
+  // Create customer
+  const demoCustomer = await prisma.customer.upsert({
+    where: { id: clientPerson.id },
+    update: {},
+    create: {
+      id: clientPerson.id,
+      tenantId: demoTenant.id,
+      isActive: true,
     },
   })
 
   // Assign specialties to providers
   await prisma.providerSpecialty.upsert({
     where: {
-      personId_specialtyId: {
-        personId: drSmith.id,
+      providerId_specialtyId: {
+        providerId: drSmithProvider.id,
         specialtyId: generalSpecialty.id,
       },
     },
     update: {},
     create: {
       tenantId: demoTenant.id,
-      personId: drSmith.id,
+      providerId: drSmithProvider.id,
       specialtyId: generalSpecialty.id,
     },
   })
 
   await prisma.providerSpecialty.upsert({
     where: {
-      personId_specialtyId: {
-        personId: drJohnson.id,
+      providerId_specialtyId: {
+        providerId: drJohnsonProvider.id,
         specialtyId: dentalSpecialty.id,
       },
     },
     update: {},
     create: {
       tenantId: demoTenant.id,
-      personId: drJohnson.id,
+      providerId: drJohnsonProvider.id,
       specialtyId: dentalSpecialty.id,
     },
   })
 
+  // Assign providers to location
+  await prisma.providerLocation.upsert({
+    where: {
+      providerId_locationId: {
+        providerId: drSmithProvider.id,
+        locationId: demoLocation.id,
+      },
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      providerId: drSmithProvider.id,
+      locationId: demoLocation.id,
+    },
+  })
+
+  await prisma.providerLocation.upsert({
+    where: {
+      providerId_locationId: {
+        providerId: drJohnsonProvider.id,
+        locationId: demoLocation.id,
+      },
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      providerId: drJohnsonProvider.id,
+      locationId: demoLocation.id,
+    },
+  })
+
   // Create services
-  await prisma.service.upsert({
+  const generalConsultation = await prisma.service.upsert({
     where: { id: 'general-consultation-id' },
     update: {},
     create: {
@@ -131,13 +230,13 @@ async function main() {
       specialtyId: generalSpecialty.id,
       name: 'General Consultation',
       description: '30-minute general medical consultation',
-      duration: 30,
-      price: 150.00,
-      status: 'active',
+      defaultDurationMinutes: 30,
+      defaultCapacity: 1,
+      isActive: true,
     },
   })
 
-  await prisma.service.upsert({
+  const dentalCheckup = await prisma.service.upsert({
     where: { id: 'dental-checkup-id' },
     update: {},
     create: {
@@ -146,46 +245,155 @@ async function main() {
       specialtyId: dentalSpecialty.id,
       name: 'Dental Check-up',
       description: '45-minute comprehensive dental examination',
-      duration: 45,
-      price: 200.00,
-      status: 'active',
+      defaultDurationMinutes: 45,
+      defaultCapacity: 1,
+      isActive: true,
     },
   })
 
-  // Create a demo client
-  const demoClient = await prisma.person.upsert({
-    where: { id: 'demo-client-id' },
+  // Create provider services with pricing
+  await prisma.providerService.upsert({
+    where: {
+      providerId_serviceId: {
+        providerId: drSmithProvider.id,
+        serviceId: generalConsultation.id,
+      },
+    },
     update: {},
     create: {
-      id: 'demo-client-id',
       tenantId: demoTenant.id,
-      type: 'client',
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'jane.doe@email.com',
-      phone: '(555) 987-6543',
-      status: 'active',
+      providerId: drSmithProvider.id,
+      serviceId: generalConsultation.id,
+      priceCents: 15000, // $150.00
+      isActive: true,
     },
   })
 
-  // Create a demo user
-  await prisma.user.upsert({
-    where: { email: 'admin@democlinic.com' },
+  await prisma.providerService.upsert({
+    where: {
+      providerId_serviceId: {
+        providerId: drJohnsonProvider.id,
+        serviceId: dentalCheckup.id,
+      },
+    },
     update: {},
     create: {
       tenantId: demoTenant.id,
-      email: 'admin@democlinic.com',
-      name: 'Demo Admin',
-      role: 'admin',
-      status: 'active',
+      providerId: drJohnsonProvider.id,
+      serviceId: dentalCheckup.id,
+      priceCents: 20000, // $200.00
+      isActive: true,
+    },
+  })
+
+  // Create working hours for providers
+  // Dr. Smith - Monday to Friday 9AM-5PM
+  const weekdays = [1, 2, 3, 4, 5] // Monday to Friday
+  for (const weekday of weekdays) {
+    await prisma.providerWorkingHours.upsert({
+      where: { 
+        id: `dr-smith-hours-${weekday}`
+      },
+      update: {},
+      create: {
+        id: `dr-smith-hours-${weekday}`,
+        tenantId: demoTenant.id,
+        providerId: drSmithProvider.id,
+        locationId: demoLocation.id,
+        weekday,
+        startLocalTime: '09:00',
+        endLocalTime: '17:00',
+      },
+    })
+  }
+
+  // Dr. Johnson - Tuesday to Saturday 10AM-6PM  
+  const drJohnsonDays = [2, 3, 4, 5, 6] // Tuesday to Saturday
+  for (const weekday of drJohnsonDays) {
+    await prisma.providerWorkingHours.upsert({
+      where: { 
+        id: `dr-johnson-hours-${weekday}`
+      },
+      update: {},
+      create: {
+        id: `dr-johnson-hours-${weekday}`,
+        tenantId: demoTenant.id,
+        providerId: drJohnsonProvider.id,
+        locationId: demoLocation.id,
+        weekday,
+        startLocalTime: '10:00',
+        endLocalTime: '18:00',
+      },
+    })
+  }
+
+  // Create some sample parameter definitions
+  const visitTypeParam = await prisma.parameterDefinition.upsert({
+    where: { id: 'visit-type-param-id' },
+    update: {},
+    create: {
+      id: 'visit-type-param-id',
+      tenantId: demoTenant.id,
+      name: 'Visit Type',
+      dataType: 'enum',
+      scope: 'appointment',
+      isRequired: true,
+      helpText: 'Type of medical visit',
+    },
+  })
+
+  // Create parameter options for visit type
+  await prisma.parameterOption.upsert({
+    where: { id: 'visit-type-routine-id' },
+    update: {},
+    create: {
+      id: 'visit-type-routine-id',
+      tenantId: demoTenant.id,
+      parameterId: visitTypeParam.id,
+      value: 'routine',
+      label: 'Routine Check-up',
+      sortOrder: 1,
+    },
+  })
+
+  await prisma.parameterOption.upsert({
+    where: { id: 'visit-type-followup-id' },
+    update: {},
+    create: {
+      id: 'visit-type-followup-id',
+      tenantId: demoTenant.id,
+      parameterId: visitTypeParam.id,
+      value: 'followup',
+      label: 'Follow-up Visit',
+      sortOrder: 2,
+    },
+  })
+
+  // Create a sample booking rule
+  await prisma.bookingRule.upsert({
+    where: { id: 'default-booking-rule-id' },
+    update: {},
+    create: {
+      id: 'default-booking-rule-id',
+      tenantId: demoTenant.id,
+      serviceId: null, // Default for all services
+      minNoticeMinutes: 60, // 1 hour minimum notice
+      maxHorizonDays: 90, // 90 days in advance
+      cancelCutoffMinutes: 60, // 1 hour before appointment
+      allowDoubleBook: false,
     },
   })
 
   console.log('Seed completed successfully!')
-  console.log('Demo tenant:', demoTenant.name)
-  console.log('Demo location:', demoLocation.name)
-  console.log('Providers:', drSmith.firstName + ' ' + drSmith.lastName, drJohnson.firstName + ' ' + drJohnson.lastName)
-  console.log('Client:', demoClient.firstName + ' ' + demoClient.lastName)
+  console.log('Created:')
+  console.log('- Demo tenant:', demoTenant.name)
+  console.log('- Demo location:', demoLocation.name)
+  console.log('- Admin user:', adminUser.email)
+  console.log('- Providers:', drSmithProvider.displayName, drJohnsonProvider.displayName)
+  console.log('- Customer:', demoCustomer.id)
+  console.log('- Services:', generalConsultation.name, dentalCheckup.name)
+  console.log('- Working hours configured for all providers')
+  console.log('- Sample parameter definitions and booking rules created')
 }
 
 main()

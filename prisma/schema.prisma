@@ -10,100 +10,187 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =============================================================================
+// 1) TENANCY & ACCESS
+// =============================================================================
+
 model Tenant {
   id              String   @id @default(cuid())
   name            String
-  timezone        String   @default("UTC")
+  legalName       String?
+  billingEmail    String?
   defaultCurrency String   @default("USD")
+  timezone        String   @default("UTC")
   status          String   @default("active")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   // Relations
-  users       User[]
-  locations   Location[]
-  persons     Person[]
-  services    Service[]
-  specialties Specialty[]
-  appointments Appointment[]
-  products    Product[]
-  plans       Plan[]
-  subscriptions Subscription[]
-  invoices    Invoice[]
-  payments    Payment[]
+  users               User[]
+  locations           Location[]
+  people              Person[]
+  providers           Provider[]
+  customers           Customer[]
+  specialties         Specialty[]
+  services            Service[]
+  resources           Resource[]
+  appointments        Appointment[]
+  bookingHolds        BookingHold[]
+  parameterDefs       ParameterDefinition[]
+  bookingRules        BookingRule[]
+  subscriptions       Subscription[]
+  invoices            Invoice[]
+  paymentMethods      PaymentMethod[]
+  payments            Payment[]
+  usageEvents         UsageEvent[]
+  notifications       Notification[]
+  customerPreferences CustomerPreference[]
 
   @@map("tenants")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  tenantId  String
-  email     String   @unique
-  name      String?
-  role      String   @default("user")
-  status    String   @default("active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                        String    @id @default(cuid())
+  tenantId                  String
+  email                     String
+  firstName                 String?
+  lastName                  String?
+  role                      String    @default("staff") // owner/admin/staff/viewer
+  passwordHash              String?
+  externalIdentityProvider  String?
+  externalSubject           String?
+  isActive                  Boolean   @default(true)
+  lastLoginAt               DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, email])
   @@index([tenantId])
   @@map("users")
 }
 
-model Location {
-  id          String   @id @default(cuid())
-  tenantId    String
-  name        String
-  address     String?
-  phone       String?
-  email       String?
-  timezone    String?
-  status      String   @default("active")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// =============================================================================
+// 2) LOCATIONS, PEOPLE & PROVIDERS
+// =============================================================================
 
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  appointments Appointment[]
+model Location {
+  id            String   @id @default(cuid())
+  tenantId      String
+  name          String
+  addressLine1  String?
+  addressLine2  String?
+  city          String?
+  region        String?
+  postalCode    String?
+  countryCode   String?
+  timezone      String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant               Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  resources            Resource[]
+  providerLocations    ProviderLocation[]
+  providerWorkingHours ProviderWorkingHours[]
+  locationClosures     LocationClosure[]
+  appointments         Appointment[]
 
   @@index([tenantId])
   @@map("locations")
 }
 
 model Person {
-  id        String   @id @default(cuid())
-  tenantId  String
-  type      String   // "provider" | "client"
-  firstName String
-  lastName  String
-  email     String?
-  phone     String?
-  status    String   @default("active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  tenantId      String
+  firstName     String
+  lastName      String
+  email         String?
+  phone         String?
+  dateOfBirth   DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  tenant              Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  providerSpecialties ProviderSpecialty[]
-  appointmentProviders AppointmentProvider[]
-  appointmentClients   AppointmentClient[]
+  tenant                   Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  provider                 Provider?
+  customer                 Customer?
 
   @@index([tenantId])
-  @@index([tenantId, type])
-  @@map("persons")
+  @@map("people")
 }
+
+model Provider {
+  id            String   @id // = Person.id
+  tenantId      String
+  displayName   String?
+  licenseNumber String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant               Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  person               Person                 @relation(fields: [id], references: [id], onDelete: Cascade)
+  providerLocations    ProviderLocation[]
+  providerSpecialties  ProviderSpecialty[]
+  providerServices     ProviderService[]
+  providerResources    ProviderResource[]
+  providerWorkingHours ProviderWorkingHours[]
+  providerTimeOffs     ProviderTimeOff[]
+  appointments         Appointment[]
+  bookingHolds         BookingHold[]
+
+  @@index([tenantId])
+  @@map("providers")
+}
+
+model Customer {
+  id           String   @id // = Person.id
+  tenantId     String
+  externalRef  String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant                   Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  person                   Person                   @relation(fields: [id], references: [id], onDelete: Cascade)
+  appointmentParticipants  AppointmentParticipant[]
+  customerParameters       CustomerParameter[]
+
+  @@index([tenantId])
+  @@map("customers")
+}
+
+model ProviderLocation {
+  tenantId   String
+  providerId String
+  locationId String
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@id([providerId, locationId])
+  @@index([tenantId])
+  @@map("provider_locations")
+}
+
+// =============================================================================
+// 3) CATALOG: SPECIALTIES & SERVICES
+// =============================================================================
 
 model Specialty {
   id          String   @id @default(cuid())
   tenantId    String
   name        String
   description String?
-  status      String   @default("active")
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  services            Service[]
   providerSpecialties ProviderSpecialty[]
+  services            Service[]
 
   @@index([tenantId])
   @@map("specialties")
@@ -112,166 +199,509 @@ model Specialty {
 model ProviderSpecialty {
   id          String @id @default(cuid())
   tenantId    String
-  personId    String
+  providerId  String
   specialtyId String
 
-  person    Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  provider  Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
   specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
 
-  @@unique([personId, specialtyId])
+  @@unique([providerId, specialtyId])
   @@index([tenantId])
   @@map("provider_specialties")
 }
 
 model Service {
-  id           String   @id @default(cuid())
-  tenantId     String
-  specialtyId  String?
-  name         String
-  description  String?
-  duration     Int      // minutes
-  price        Decimal  @default(0)
-  status       String   @default("active")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                     String  @id @default(cuid())
+  tenantId               String
+  name                   String
+  description            String?
+  specialtyId            String?
+  defaultDurationMinutes Int
+  defaultCapacity        Int     @default(1)
+  isActive               Boolean @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  specialty    Specialty?    @relation(fields: [specialtyId], references: [id])
-  appointments Appointment[]
+  tenant             Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  specialty          Specialty?         @relation(fields: [specialtyId], references: [id])
+  providerServices   ProviderService[]
+  serviceParameters  ServiceParameter[]
+  bookingRules       BookingRule[]
+  appointments       Appointment[]
+  providerWorkingHours ProviderWorkingHours[]
 
   @@index([tenantId])
   @@index([tenantId, specialtyId])
   @@map("services")
 }
 
-model Appointment {
-  id            String    @id @default(cuid())
-  tenantId      String
-  locationId    String?
-  serviceId     String?
-  title         String
-  description   String?
-  startTime     DateTime
-  endTime       DateTime
-  status        String    @default("scheduled") // scheduled, confirmed, completed, cancelled, no_show
-  notes         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+model ProviderService {
+  id               String   @id @default(cuid())
+  tenantId         String
+  providerId       String
+  serviceId        String
+  priceCents       Int?
+  durationMinutes  Int?
+  capacityOverride Int?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  location  Location?  @relation(fields: [locationId], references: [id])
-  service   Service?   @relation(fields: [serviceId], references: [id])
-  
-  providers AppointmentProvider[]
-  clients   AppointmentClient[]
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
+  @@unique([providerId, serviceId])
   @@index([tenantId])
-  @@index([tenantId, startTime])
-  @@index([tenantId, status])
-  @@map("appointments")
+  @@map("provider_services")
 }
 
-model AppointmentProvider {
-  id            String @id @default(cuid())
-  tenantId      String
-  appointmentId String
-  personId      String
+// =============================================================================
+// 4) PARAMETERS (NESTED & CONDITIONAL)
+// =============================================================================
 
-  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+model ParameterDefinition {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  dataType   String   // text|number|boolean|enum|date
+  scope      String   // service|appointment|customer
+  isRequired Boolean  @default(false)
+  helpText   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@unique([appointmentId, personId])
+  tenant                        Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parameterOptions              ParameterOption[]
+  serviceParameters             ServiceParameter[]
+  parentDependencyRules         ParameterDependencyRule[]     @relation("ParentParameter")
+  childDependencyRules          ParameterDependencyRule[]     @relation("ChildParameter")
+  appointmentParameters         AppointmentParameter[]
+  customerParameters            CustomerParameter[]
+
   @@index([tenantId])
-  @@map("appointment_providers")
+  @@map("parameter_definitions")
 }
 
-model AppointmentClient {
-  id            String @id @default(cuid())
-  tenantId      String
-  appointmentId String
-  personId      String
-
-  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
-
-  @@unique([appointmentId, personId])
-  @@index([tenantId])
-  @@map("appointment_clients")
-}
-
-// Billing-related models
-model Product {
+model ParameterOption {
   id          String   @id @default(cuid())
   tenantId    String
-  name        String
-  description String?
-  price       Decimal
-  currency    String   @default("USD")
-  status      String   @default("active")
+  parameterId String
+  value       String
+  label       String
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  plans  Plan[]
+  parameter         ParameterDefinition       @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+  dependencyRules   ParameterDependencyRule[]
 
   @@index([tenantId])
-  @@map("products")
+  @@index([parameterId])
+  @@map("parameter_options")
 }
 
-model Plan {
-  id          String   @id @default(cuid())
+model ServiceParameter {
+  id                String   @id @default(cuid())
+  tenantId          String
+  serviceId         String
+  parameterId       String
+  required          Boolean  @default(false)
+  defaultValue      String?
+  visibleInBooking  Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  service   Service             @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  parameter ParameterDefinition @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, parameterId])
+  @@index([tenantId])
+  @@map("service_parameters")
+}
+
+model ParameterDependencyRule {
+  id                 String  @id @default(cuid())
+  tenantId           String
+  parentParameterId  String
+  parentOptionId     String?
+  childParameterId   String
+  visibilityMode     String  // show|hide|require
+  appliesTo          String  // service|appointment|customer
+  serviceId          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  parentParameter  ParameterDefinition         @relation("ParentParameter", fields: [parentParameterId], references: [id], onDelete: Cascade)
+  childParameter   ParameterDefinition         @relation("ChildParameter", fields: [childParameterId], references: [id], onDelete: Cascade)
+  parentOption     ParameterOption?            @relation(fields: [parentOptionId], references: [id])
+  conditions       ParameterDependencyCondition[]
+
+  @@index([tenantId])
+  @@index([parentParameterId])
+  @@index([childParameterId])
+  @@map("parameter_dependency_rules")
+}
+
+model ParameterDependencyCondition {
+  id               String @id @default(cuid())
+  tenantId         String
+  dependencyRuleId String
+  operator         String // equals|notEquals|gt|gte|lt|lte|contains|inRange|isTrue|isFalse
+  comparisonValue  String
+  secondaryValue   String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  dependencyRule ParameterDependencyRule @relation(fields: [dependencyRuleId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("parameter_dependency_conditions")
+}
+
+model AppointmentParameter {
+  id            String @id @default(cuid())
+  tenantId      String
+  appointmentId String
+  parameterId   String
+  value         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  appointment Appointment         @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  parameter   ParameterDefinition @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+
+  @@unique([appointmentId, parameterId])
+  @@index([tenantId])
+  @@map("appointment_parameters")
+}
+
+model CustomerParameter {
+  id          String @id @default(cuid())
   tenantId    String
-  productId   String
-  name        String
-  description String?
-  price       Decimal
-  currency    String   @default("USD")
-  interval    String   // monthly, yearly, etc.
-  status      String   @default("active")
+  customerId  String
+  parameterId String
+  value       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  subscriptions Subscription[]
+  customer  Customer            @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  parameter ParameterDefinition @relation(fields: [parameterId], references: [id], onDelete: Cascade)
 
+  @@unique([customerId, parameterId])
   @@index([tenantId])
-  @@map("plans")
+  @@map("customer_parameters")
 }
 
-model Subscription {
-  id        String   @id @default(cuid())
-  tenantId  String
-  planId    String
-  status    String   @default("active") // active, cancelled, expired
-  startDate DateTime
-  endDate   DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// =============================================================================
+// 5) RESOURCES & AVAILABILITY
+// =============================================================================
 
-  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  plan     Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
-  invoices Invoice[]
+model Resource {
+  id         String   @id @default(cuid())
+  tenantId   String
+  locationId String
+  name       String
+  capacity   Int      @default(1)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant            Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  location          Location          @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  providerResources ProviderResource[]
+  appointments      Appointment[]
+  bookingHolds      BookingHold[]
 
   @@index([tenantId])
-  @@map("subscriptions")
+  @@index([locationId])
+  @@map("resources")
 }
 
-model Invoice {
-  id             String   @id @default(cuid())
+model ProviderResource {
+  tenantId   String
+  providerId String
+  resourceId String
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([providerId, resourceId])
+  @@index([tenantId])
+  @@map("provider_resources")
+}
+
+model ProviderWorkingHours {
+  id             String  @id @default(cuid())
   tenantId       String
-  subscriptionId String?
-  number         String   @unique
-  amount         Decimal
-  currency       String   @default("USD")
-  status         String   @default("draft") // draft, sent, paid, overdue, cancelled
-  dueDate        DateTime
-  paidAt         DateTime?
+  providerId     String
+  locationId     String
+  weekday        Int     // 0-6 (Sunday = 0)
+  startLocalTime String  // HH:MM format
+  endLocalTime   String  // HH:MM format
+  serviceId      String? // Optional: specific service
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  service  Service? @relation(fields: [serviceId], references: [id])
+
+  @@index([tenantId])
+  @@index([providerId])
+  @@index([locationId])
+  @@map("provider_working_hours")
+}
+
+model ProviderTimeOff {
+  id         String    @id @default(cuid())
+  tenantId   String
+  providerId String
+  startsAt   DateTime
+  endsAt     DateTime
+  reason     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([providerId])
+  @@index([startsAt, endsAt])
+  @@map("provider_time_offs")
+}
+
+model LocationClosure {
+  id         String    @id @default(cuid())
+  tenantId   String
+  locationId String
+  startsAt   DateTime
+  endsAt     DateTime
+  reason     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([locationId])
+  @@index([startsAt, endsAt])
+  @@map("location_closures")
+}
+
+model BookingRule {
+  id                   String  @id @default(cuid())
+  tenantId             String
+  serviceId            String? // null = tenant default
+  minNoticeMinutes     Int     @default(0)
+  maxHorizonDays       Int     @default(90)
+  cancelCutoffMinutes  Int     @default(60)
+  allowDoubleBook      Boolean @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  service Service? @relation(fields: [serviceId], references: [id])
+
+  @@index([tenantId])
+  @@index([serviceId])
+  @@map("booking_rules")
+}
+
+// =============================================================================
+// 6) APPOINTMENTS & BOOKING FLOW
+// =============================================================================
+
+model Appointment {
+  id              String    @id @default(cuid())
+  tenantId        String
+  locationId      String
+  providerId      String
+  resourceId      String?
+  serviceId       String
+  startAt         DateTime
+  endAt           DateTime
+  status          String    @default("pending") // pending|confirmed|checked_in|completed|canceled|no_show
+  priceCents      Int?
+  notesPublic     String?
+  notesInternal   String?
+  createdByUserId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant                  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  location                Location                 @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  provider                Provider                 @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  resource                Resource?                @relation(fields: [resourceId], references: [id])
+  service                 Service                  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  participants            AppointmentParticipant[]
+  appointmentParameters   AppointmentParameter[]
+
+  @@index([tenantId])
+  @@index([tenantId, startAt])
+  @@index([tenantId, status])
+  @@index([providerId, startAt, endAt])
+  @@map("appointments")
+}
+
+model AppointmentParticipant {
+  id            String    @id @default(cuid())
+  tenantId      String
+  appointmentId String
+  customerId    String
+  role          String    @default("attendee") // attendee|guardian|interpreter
+  checkInAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([appointmentId, customerId])
+  @@index([tenantId])
+  @@map("appointment_participants")
+}
+
+model BookingHold {
+  id          String    @id @default(cuid())
+  tenantId    String
+  providerId  String
+  resourceId  String?
+  startAt     DateTime
+  endAt       DateTime
+  fingerprint String    // unique identifier for the booking session
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  provider Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  resource Resource? @relation(fields: [resourceId], references: [id])
+
+  @@index([tenantId])
+  @@index([providerId, startAt, endAt])
+  @@index([expiresAt])
+  @@map("booking_holds")
+}
+
+// =============================================================================
+// 7) BILLING & PAYMENTS (TENANT-LEVEL)
+// =============================================================================
+
+// Global products (not tenant-specific)
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pricePlans    PricePlan[]
+  subscriptions Subscription[]
+
+  @@map("products")
+}
+
+model PricePlan {
+  id                            String  @id @default(cuid())
+  productId                     String
+  name                          String
+  billingCycle                  String  // monthly|yearly
+  priceCents                    Int
+  currency                      String  @default("USD")
+  includesSeats                 Int     @default(1)
+  includesAppointmentsPerMonth  Int?
+  overagePerAppointmentCents    Int?
+  isActive                      Boolean @default(true)
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+
+  @@index([productId])
+  @@map("price_plans")
+}
+
+model Subscription {
+  id                       String    @id @default(cuid())
+  tenantId                 String
+  productId                String
+  pricePlanId              String
+  status                   String    @default("active") // trialing|active|past_due|canceled|paused
+  billingCycleAnchor       DateTime
+  trialEnd                 DateTime?
+  cancelAtPeriodEnd        Boolean   @default(false)
+  externalProvider         String?   // stripe|other
+  externalSubscriptionId   String?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product           Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  pricePlan         PricePlan          @relation(fields: [pricePlanId], references: [id], onDelete: Cascade)
+  subscriptionItems SubscriptionItem[]
+  usageEvents       UsageEvent[]
+  invoices          Invoice[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model SubscriptionItem {
+  id             String @id @default(cuid())
+  subscriptionId String
+  name           String
+  priceCents     Int
+  quantity       Int    @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@map("subscription_items")
+}
+
+model UsageEvent {
+  id             String   @id @default(cuid())
+  tenantId       String
+  subscriptionId String
+  meter          String   // appointments_booked|seats_used|etc
+  quantity       Int
+  occurredAt     DateTime
+  recordedAt     DateTime @default(now())
+
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([subscriptionId])
+  @@index([occurredAt])
+  @@map("usage_events")
+}
+
+model Invoice {
+  id                  String    @id @default(cuid())
+  tenantId            String
+  subscriptionId      String?
+  number              String    @unique
+  status              String    @default("draft") // draft|open|paid|void
+  currency            String    @default("USD")
+  subtotalCents       Int
+  taxCents            Int       @default(0)
+  totalCents          Int
+  dueAt               DateTime
+  issuedAt            DateTime?
+  externalProvider    String?   // stripe|other
+  externalInvoiceId   String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription Subscription?  @relation(fields: [subscriptionId], references: [id])
+  invoiceLines InvoiceLine[]
   payments     Payment[]
 
   @@index([tenantId])
@@ -279,23 +709,112 @@ model Invoice {
   @@map("invoices")
 }
 
-model Payment {
-  id              String   @id @default(cuid())
-  tenantId        String
-  invoiceId       String?
-  amount          Decimal
-  currency        String   @default("USD")
-  status          String   @default("pending") // pending, completed, failed, refunded
-  paymentMethod   String? // card, bank_transfer, etc.
-  externalId      String? // Stripe payment intent ID, etc.
-  processedAt     DateTime?
+model InvoiceLine {
+  id              String @id @default(cuid())
+  invoiceId       String
+  description     String
+  quantity        Int
+  unitAmountCents Int
+  amountCents     Int
+  metadata        String? // JSON string
   createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
 
-  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_lines")
+}
+
+model PaymentMethod {
+  id                         String   @id @default(cuid())
+  tenantId                   String
+  type                       String   // card|bank_transfer|pix|boleto
+  brand                      String?
+  last4                      String?
+  expMonth                   Int?
+  expYear                    Int?
+  holderName                 String?
+  billingEmail               String?
+  billingAddressLine1        String?
+  billingAddressLine2        String?
+  billingCity                String?
+  billingRegion              String?
+  billingPostalCode          String?
+  billingCountryCode         String?
+  isDefault                  Boolean  @default(false)
+  externalProvider           String?  // stripe|other
+  externalPaymentMethodId    String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@index([tenantId])
+  @@map("payment_methods")
+}
+
+model Payment {
+  id                         String    @id @default(cuid())
+  tenantId                   String
+  invoiceId                  String?
+  status                     String    @default("pending") // pending|succeeded|failed|refunded|partial_refund
+  amountCents                Int
+  currency                   String    @default("USD")
+  paymentMethodId            String?
+  externalProvider           String?   // stripe|other
+  externalPaymentIntentId    String?
+  receivedAt                 DateTime?
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoice       Invoice?       @relation(fields: [invoiceId], references: [id])
+  paymentMethod PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
 
   @@index([tenantId])
   @@index([tenantId, status])
   @@map("payments")
+}
+
+// =============================================================================
+// 8) NOTIFICATIONS (OPTIONAL)
+// =============================================================================
+
+model Notification {
+  id           String    @id @default(cuid())
+  tenantId     String
+  type         String    // booking_confirmation|reminder|cancelation|payment_receipt
+  channel      String    // email|sms|push|whatsapp
+  toPersonId   String?
+  toAddress    String
+  payload      String    // JSON or text
+  status       String    @default("queued") // queued|sent|failed
+  scheduledFor DateTime?
+  sentAt       DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("notifications")
+}
+
+model CustomerPreference {
+  id         String   @id @default(cuid())
+  tenantId   String
+  customerId String
+  channel    String   // email|sms|whatsapp
+  optIn      Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, customerId, channel])
+  @@index([tenantId])
+  @@map("customer_preferences")
 }
