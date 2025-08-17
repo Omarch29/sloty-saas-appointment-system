@@ -1,0 +1,301 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id              String   @id @default(cuid())
+  name            String
+  timezone        String   @default("UTC")
+  defaultCurrency String   @default("USD")
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  users       User[]
+  locations   Location[]
+  persons     Person[]
+  services    Service[]
+  specialties Specialty[]
+  appointments Appointment[]
+  products    Product[]
+  plans       Plan[]
+  subscriptions Subscription[]
+  invoices    Invoice[]
+  payments    Payment[]
+
+  @@map("tenants")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  tenantId  String
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("users")
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  address     String?
+  phone       String?
+  email       String?
+  timezone    String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@index([tenantId])
+  @@map("locations")
+}
+
+model Person {
+  id        String   @id @default(cuid())
+  tenantId  String
+  type      String   // "provider" | "client"
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant              Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  providerSpecialties ProviderSpecialty[]
+  appointmentProviders AppointmentProvider[]
+  appointmentClients   AppointmentClient[]
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@map("persons")
+}
+
+model Specialty {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  services            Service[]
+  providerSpecialties ProviderSpecialty[]
+
+  @@index([tenantId])
+  @@map("specialties")
+}
+
+model ProviderSpecialty {
+  id          String @id @default(cuid())
+  tenantId    String
+  personId    String
+  specialtyId String
+
+  person    Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, specialtyId])
+  @@index([tenantId])
+  @@map("provider_specialties")
+}
+
+model Service {
+  id           String   @id @default(cuid())
+  tenantId     String
+  specialtyId  String?
+  name         String
+  description  String?
+  duration     Int      // minutes
+  price        Decimal  @default(0)
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  specialty    Specialty?    @relation(fields: [specialtyId], references: [id])
+  appointments Appointment[]
+
+  @@index([tenantId])
+  @@index([tenantId, specialtyId])
+  @@map("services")
+}
+
+model Appointment {
+  id            String    @id @default(cuid())
+  tenantId      String
+  locationId    String?
+  serviceId     String?
+  title         String
+  description   String?
+  startTime     DateTime
+  endTime       DateTime
+  status        String    @default("scheduled") // scheduled, confirmed, completed, cancelled, no_show
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  location  Location?  @relation(fields: [locationId], references: [id])
+  service   Service?   @relation(fields: [serviceId], references: [id])
+  
+  providers AppointmentProvider[]
+  clients   AppointmentClient[]
+
+  @@index([tenantId])
+  @@index([tenantId, startTime])
+  @@index([tenantId, status])
+  @@map("appointments")
+}
+
+model AppointmentProvider {
+  id            String @id @default(cuid())
+  tenantId      String
+  appointmentId String
+  personId      String
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([appointmentId, personId])
+  @@index([tenantId])
+  @@map("appointment_providers")
+}
+
+model AppointmentClient {
+  id            String @id @default(cuid())
+  tenantId      String
+  appointmentId String
+  personId      String
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([appointmentId, personId])
+  @@index([tenantId])
+  @@map("appointment_clients")
+}
+
+// Billing-related models
+model Product {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String?
+  price       Decimal
+  currency    String   @default("USD")
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plans  Plan[]
+
+  @@index([tenantId])
+  @@map("products")
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  tenantId    String
+  productId   String
+  name        String
+  description String?
+  price       Decimal
+  currency    String   @default("USD")
+  interval    String   // monthly, yearly, etc.
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+
+  @@index([tenantId])
+  @@map("plans")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  tenantId  String
+  planId    String
+  status    String   @default("active") // active, cancelled, expired
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan     Plan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+
+  @@index([tenantId])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id             String   @id @default(cuid())
+  tenantId       String
+  subscriptionId String?
+  number         String   @unique
+  amount         Decimal
+  currency       String   @default("USD")
+  status         String   @default("draft") // draft, sent, paid, overdue, cancelled
+  dueDate        DateTime
+  paidAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  payments     Payment[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("invoices")
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  tenantId        String
+  invoiceId       String?
+  amount          Decimal
+  currency        String   @default("USD")
+  status          String   @default("pending") // pending, completed, failed, refunded
+  paymentMethod   String? // card, bank_transfer, etc.
+  externalId      String? // Stripe payment intent ID, etc.
+  processedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("payments")
+}

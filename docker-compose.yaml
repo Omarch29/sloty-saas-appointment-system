@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: sloty_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sloty
+      POSTGRES_PASSWORD: sloty
+      POSTGRES_DB: sloty
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
