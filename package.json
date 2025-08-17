@@ -9,11 +9,20 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "packageManager": "pnpm@8.0.0",
   "scripts": {
-    "dev": "pnpm -C apps/web dev",
-    "build": "pnpm -C apps/web build",
-    "start": "pnpm -C apps/web start",
+    "dev": "concurrently \"pnpm dev:backoffice\" \"pnpm dev:tenant\" \"pnpm dev:booking\"",
+    "dev:backoffice": "pnpm -C apps/backoffice dev",
+    "dev:tenant": "pnpm -C apps/tenant dev --port 3001",
+    "dev:booking": "pnpm -C apps/booking dev --port 3002",
+    "build": "pnpm build:packages && pnpm build:apps",
+    "build:packages": "pnpm -r --filter \"./packages/*\" build",
+    "build:apps": "pnpm -r --filter \"./apps/*\" build",
+    "build:backoffice": "pnpm -C apps/backoffice build",
+    "build:tenant": "pnpm -C apps/tenant build",
+    "build:booking": "pnpm -C apps/booking build",
+    "start:backoffice": "pnpm -C apps/backoffice start",
+    "start:tenant": "pnpm -C apps/tenant start",
+    "start:booking": "pnpm -C apps/booking start",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
@@ -25,13 +34,15 @@
     "test": "vitest",
     "e2e": "playwright test",
     "lint": "eslint .",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "clean": "pnpm -r clean && rm -rf node_modules"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
     "@types/node": "^20.8.0",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
+    "concurrently": "^8.2.0",
     "eslint": "^8.52.0",
     "eslint-config-next": "^14.0.0",
     "eslint-config-prettier": "^9.0.0",
@@ -40,6 +51,7 @@
     "prettier": "^3.0.0",
     "prisma": "^5.5.0",
     "ts-node": "^10.9.0",
+    "tsup": "^8.0.0",
     "typescript": "^5.2.0",
     "vitest": "^0.34.0"
   },

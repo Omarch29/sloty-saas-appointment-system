@@ -1,115 +1,303 @@
-# sloty — SaaS Appointment System
+# Sloty — Multi-Tenant SaaS Appointment System
 
-> **sloty** is a multi-tenant scheduling platform built with **Next.js**, **Prisma**, **TypeScript**, and **PostgreSQL**.  
-> It scales from a one-chair barbershop to a full clinic with specialties, services, availability, and nested/conditional booking parameters.  
-> Documentation powered by **Docusaurus**. Tests with **Vitest**, **Testing Library**, and **Playwright**.
+> **Sloty** is a comprehensive multi-tenant scheduling platform built with **Next.js**, **Prisma**, **TypeScript**, and **PostgreSQL**.  
+> It scales from a single provider practice to enterprise healthcare systems with specialties, services, complex availability rules, and nested/conditional booking parameters.  
+> Built as a **monorepo** with three dedicated applications, shared packages, and comprehensive documentation.
 
 ## ✨ Features
 
-- **Multi-tenant**: strict tenant isolation (per-row `tenantId`)
-- **Flexible catalog**: specialties, services, provider overrides
-- **Nested parameters**: conditional fields shown based on previous selections
-- **Availability engine**: weekly hours, time off, closures, slot holds
-- **Appointments**: participants, statuses, audits
-- **Billing-ready**: products, plans, subscriptions, invoices, payments (extensible)
-- **Docs**: Docusaurus site inside the repo
-- **DX**: TypeScript, ESLint, Prettier, commit hooks
+- **🏢 Multi-tenant Architecture**: Complete tenant isolation with per-row `tenantId` security
+- **🔐 Role-based Access Control**: Superadmin, tenant admin, staff, and customer roles
+- **🏥 Healthcare-Ready**: Providers, specialties, services, locations, and resources
+- **📋 Flexible Parameters**: Nested/conditional form fields based on service selections
+- **⏰ Advanced Scheduling**: Working hours, time off, location closures, booking holds
+- **📊 Comprehensive Billing**: Products, plans, subscriptions, invoices, and payments
+- **🎨 Shared UI Components**: Consistent design system across all applications
+- **📚 Built-in Documentation**: Docusaurus-powered docs with live examples
+- **🧪 Full Test Coverage**: Unit, integration, and e2e testing with modern tooling
 
-## 🧰 Tech Stack
+## 🏗️ Architecture
 
-- **Frontend**: Next.js (App Router) + React, TypeScript
-- **DB/ORM**: PostgreSQL + Prisma
-- **Docs**: Docusaurus 3
-- **Testing**: Vitest (unit), @testing-library/react (component), Playwright (e2e)
-- **Tooling**: ESLint, Prettier, Husky, lint-staged
-- **Auth**: (stubbed) — pluggable auth provider (NextAuth or custom)
+### Monorepo Structure
 
----
-
-## 📁 Monorepo Layout
+This project follows a **monorepo architecture** with dedicated applications and shared packages:
 
 ```
 sloty-saas-appointment-system/
-├─ apps/
-│  ├─ web/                 # Next.js app (App Router, /app)
-│  └─ docs/                # Docusaurus
-├─ prisma/
-│  ├─ schema.prisma        # Data model
-│  └─ seed.ts              # Seed script
-├─ packages/
-│  └─ config/              # shared ESLint/tsconfig/etc (optional)
-├─ .env.example
-├─ docker-compose.yaml     # local Postgres
-├─ package.json
-└─ README.md
+├── apps/                           # Applications
+│   ├── backoffice/                # Superadmin UI (port 3000)
+│   │   ├── src/app/               # Next.js App Router
+│   │   ├── package.json
+│   │   └── tailwind.config.ts
+│   ├── tenant/                    # Tenant Backoffice (port 3001)
+│   │   ├── src/app/               # Tenant management interface
+│   │   └── middleware.ts          # Tenant resolution
+│   ├── booking/                   # Customer Booking UI (port 3002)
+│   │   ├── src/app/               # Public booking interface
+│   │   └── middleware.ts          # Rate limiting & tenant resolution
+│   └── docs/                      # Docusaurus documentation
+├── packages/                      # Shared packages
+│   ├── ui/                        # Shared UI components
+│   │   ├── src/components/        # Button, Card, Form, Modal
+│   │   ├── tailwind.config.ts     # Design system
+│   │   └── package.json
+│   ├── db/                        # Database client & utilities
+│   │   ├── src/index.ts           # Prisma client + tenant helpers
+│   │   └── package.json
+│   ├── auth/                      # Authentication & authorization
+│   │   ├── src/index.ts           # NextAuth config + RBAC
+│   │   └── package.json
+│   └── config/                    # Shared configuration
+│       ├── tailwind.config.js     # Base Tailwind config
+│       └── eslint.config.js       # ESLint rules
+├── prisma/
+│   ├── schema.prisma              # 40+ models, comprehensive data model
+│   ├── seed.ts                    # Demo data with dependency rules
+│   └── migrations/                # Database migrations
+├── .env.example                   # Environment template
+├── docker-compose.yaml            # PostgreSQL + pgAdmin
+└── package.json                   # Workspace orchestration
+```
+
+### Application Roles
+
+| App | Purpose | Port | Users |
+|-----|---------|------|-------|
+| **Backoffice** | System administration, tenant management, global settings | 3000 | Superadmins |
+| **Tenant** | Practice management, providers, appointments, billing | 3001 | Clinic owners, staff |
+| **Booking** | Patient-facing booking interface | 3002 | Patients, customers |
+
+## 🧰 Tech Stack
+
+- **Frontend**: Next.js 15 (App Router), React 19, TypeScript 5
+- **Database**: PostgreSQL 16 + Prisma ORM 5
+- **UI/Styling**: Tailwind CSS 4, shadcn/ui components
+- **Authentication**: NextAuth.js with credentials + RBAC
+- **Documentation**: Docusaurus 3
+- **Testing**: Vitest (unit), Testing Library (components), Playwright (e2e)
+- **Tooling**: ESLint 9, Prettier, Husky, lint-staged
+- **Build**: tsup for packages, native Next.js for apps
+- **Container**: Docker Compose for local development
+
+---
+
+## � Getting Started
+
+### Prerequisites
+
+- **Node.js**: >= 20.17.0 or >= 22.9.0
+- **Package Manager**: npm (recommended) or pnpm
+- **Database**: Docker & Docker Compose (for local PostgreSQL)
+
+### 1. Clone & Install
+
+```bash
+git clone <repository-url>
+cd sloty-saas-appointment-system
+npm install
+```
+
+### 2. Database Setup
+
+```bash
+# Start PostgreSQL with Docker
+docker compose up -d
+
+# Copy environment variables
+cp .env.example .env
+
+# Run migrations and seed data
+npm run prisma:migrate
+npm run prisma:seed
+```
+
+### 3. Build Shared Packages
+
+```bash
+# Build all shared packages
+npm run build:packages
+
+# Or build individually
+cd packages/ui && npm run build
+cd packages/db && npm run build
+```
+
+### 4. Start Development
+
+```bash
+# Start all apps simultaneously
+npm run dev
+
+# Or start individually
+npm run dev:backoffice  # http://localhost:3000
+npm run dev:tenant      # http://localhost:3001  
+npm run dev:booking     # http://localhost:3002
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📦 Package Development
 
-### 1) Requirements
+### Shared Packages
 
-- Node.js 18+ (LTS recommended)
-- PNPM (recommended) or npm/yarn
-- Docker (for local Postgres)  
-  _or_ an external Postgres URL
+The monorepo uses shared packages to maintain consistency and avoid duplication:
 
-### 2) Clone & Install
+#### `@sloty/ui`
+- **Purpose**: Shared React components with consistent styling
+- **Components**: Button, Card, Form, Modal, Typography
+- **Features**: Tailwind CSS, TypeScript, Tree-shaking support
+- **Build**: `cd packages/ui && npm run build`
+
+#### `@sloty/db`
+- **Purpose**: Centralized database client with tenant-guarded operations
+- **Features**: Prisma client singleton, tenant-scoped queries, type safety
+- **Usage**: `createTenantClient(tenantId)` for multi-tenant operations
+- **Build**: `cd packages/db && npm run build`
+
+#### `@sloty/auth`
+- **Purpose**: Authentication configuration and RBAC helpers
+- **Features**: NextAuth.js setup, role-based guards, session management
+- **Guards**: `requireRole('superadmin')`, `requireTenantRole(['admin', 'staff'])`
+- **Build**: `cd packages/auth && npm run build`
+
+#### `@sloty/config`
+- **Purpose**: Shared configuration for Tailwind, ESLint, TypeScript
+- **Features**: Base configs, environment helpers, app-specific overrides
+- **Build**: `cd packages/config && npm run build`
+
+### Package Dependencies
+
+Applications reference packages using file paths:
+```json
+{
+  "dependencies": {
+    "@sloty/ui": "file:../../packages/ui",
+    "@sloty/db": "file:../../packages/db",
+    "@sloty/auth": "file:../../packages/auth",
+    "@sloty/config": "file:../../packages/config"
+  }
+}
+```
+
+---
+
+## 🗃️ Database Schema
+
+### Multi-Tenant Architecture
+
+The system uses **row-level multitenancy** with a `tenantId` column in every table:
+
+- **Tenant Isolation**: All queries are scoped to the current tenant
+- **Data Security**: No cross-tenant data leakage
+- **Scalability**: Single database, multiple organizations
+
+### Core Entities (40+ Models)
+
+| Section | Models | Purpose |
+|---------|---------|---------|
+| **Tenancy** | `Tenant`, `User` | Organization and access control |
+| **People** | `Person`, `Provider`, `Customer` | Healthcare providers and patients |
+| **Catalog** | `Specialty`, `Service`, `Location` | Medical services and facilities |
+| **Parameters** | `ParameterDefinition`, `ParameterOption` | Dynamic form fields with dependencies |
+| **Scheduling** | `Appointment`, `ProviderWorkingHours` | Booking and availability |
+| **Billing** | `Product`, `Subscription`, `Invoice` | SaaS billing and payments |
+| **System** | `Notification`, `BookingRule` | Communication and business logic |
+
+### Parameter System
+
+Advanced conditional form system:
+- **Dynamic Fields**: Show/hide fields based on previous selections
+- **Validation Rules**: Complex conditional validation
+- **Multi-Level**: Nested dependencies up to N levels deep
+- **Service-Specific**: Different parameters per service
+
+---
+
+## 🔐 Authentication & Authorization
+
+### Role Hierarchy
+
+1. **Superadmin**: System-wide access, tenant management
+2. **Tenant Admin**: Full access within their organization
+3. **Staff**: Limited access to appointments and patients
+4. **Customer**: Booking interface access only
+
+### Implementation
+
+```typescript
+// Server-side protection
+import { requireRole, requireTenantRole } from '@sloty/auth'
+
+// Superadmin only
+export async function createTenant() {
+  const session = await requireRole('superadmin')()
+  // ... tenant creation logic
+}
+
+// Tenant staff
+export async function getAppointments(tenantId: string) {
+  const session = await requireTenantRole(['admin', 'staff'])()
+  // ... appointments logic
+}
+```
+
+### Tenant Resolution
+
+Multi-tenant apps resolve the tenant from:
+1. **Subdomain**: `demo-clinic.localhost:3001` → `tenantId: demo-clinic`
+2. **Header**: `x-tenant-id` for API calls
+3. **Session**: Stored in user authentication
+
+---
+
+## 🚀 Deployment
+
+### Environment Preparation
 
 ```bash
-git clone https://github.com/your-org/sloty-saas-appointment-system.git
-cd sloty-saas-appointment-system
-pnpm install
+# Production environment
+NODE_ENV=production
+DATABASE_URL="postgresql://user:pass@host:5432/sloty"
+NEXTAUTH_SECRET="your-production-secret"
+NEXTAUTH_URL="https://your-domain.com"
+
+# Optional: External services
+STRIPE_SECRET_KEY="sk_live_..."
+REDIS_URL="redis://..."
 ```
 
-### 3) Environment Variables
-
-Copy `.env.example` to `.env` and fill values:
+### Build Commands
 
 ```bash
-cp .env.example .env
+# Build all packages and apps
+npm run build
+
+# Build specific app
+npm run build:backoffice
+npm run build:tenant
+npm run build:booking
+
+# Production start
+npm run start:backoffice
+npm run start:tenant
+npm run start:booking
 ```
 
-**`.env.example`**
+### Docker Support
 
-```
-# Database
-DATABASE_URL="postgresql://sloty:sloty@localhost:5432/sloty?schema=public"
-
-# Next.js
-NEXT_PUBLIC_APP_NAME="sloty"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="replace-with-strong-secret"
-
-# Optional external billing providers (Stripe, etc.)
-STRIPE_SECRET_KEY=""
-STRIPE_WEBHOOK_SECRET=""
+```dockerfile
+# Example Dockerfile for apps
+FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
 ```
 
-### 4) Start Postgres (Docker)
-
-```bash
-docker compose up -d
-```
-
-`docker-compose.yaml` provisions a local Postgres with user/password `sloty/sloty`.
-
-### 5) Prisma: Migrate & Seed
-
-```bash
-pnpm prisma:generate
-pnpm prisma:migrate
-pnpm prisma:seed
-```
-
-### 6) Run the App
-
-```bash
-pnpm dev
-```
-
-- Web: http://localhost:3000  
+---  
 - Docs: http://localhost:3100 (see below)
 
 ---
