@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3005",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -17,7 +17,11 @@
     "@sloty/auth": "file:../../packages/auth",
     "@sloty/db": "file:../../packages/db",
     "@sloty/config": "file:../../packages/config",
-    "next-auth": "^4.24.0"
+    "next-auth": "^4.24.0",
+    "zod": "^3.23.8",
+    "date-fns": "^4.0.0",
+    "lucide-react": "^0.447.0",
+    "clsx": "^2.1.1"
   },
   "devDependencies": {
     "typescript": "^5",
