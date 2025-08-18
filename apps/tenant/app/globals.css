@@ -2,25 +2,70 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --foreground: #111827;
+  --primary: #059669;
+  --secondary: #6b7280;
+  --accent: #dc2626;
+  --muted: #f3f4f6;
+  --border: #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #f9fafb;
+    --secondary: #9ca3af;
+    --muted: #1f2937;
+    --border: #374151;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Enhanced contrast for better readability */
+.text-tremor-content-subtle {
+  color: #4b5563 !important;
+}
+
+.dark .text-tremor-content-subtle {
+  color: #9ca3af !important;
+}
+
+/* Ensure proper contrast for navigation and text elements */
+nav, .navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark nav, .dark .navbar {
+  background: #111827;
+  border-bottom: 1px solid #374151;
+}
+
+/* Improve text contrast in cards and components */
+.tremor-Card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.dark .tremor-Card {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #f9fafb;
+}
+
+/* Medical theme specific styling */
+.medical-card {
+  background: #f8fafc;
+  border-left: 4px solid #059669;
+}
+
+.dark .medical-card {
+  background: #1e293b;
+  border-left: 4px solid #10b981;
 }
