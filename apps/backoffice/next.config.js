@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'prisma']
-  },
+  serverExternalPackages: ['@prisma/client', 'prisma'],
   transpilePackages: ['@sloty/ui', '@sloty/db', '@sloty/auth', '@sloty/config'],
   typescript: {
     ignoreBuildErrors: true

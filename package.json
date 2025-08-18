@@ -12,8 +12,8 @@
   "scripts": {
     "dev": "concurrently \"pnpm dev:backoffice\" \"pnpm dev:tenant\" \"pnpm dev:booking\"",
     "dev:backoffice": "pnpm -C apps/backoffice dev",
-    "dev:tenant": "pnpm -C apps/tenant dev --port 3001",
-    "dev:booking": "pnpm -C apps/booking dev --port 3002",
+    "dev:tenant": "pnpm -C apps/tenant dev",
+    "dev:booking": "pnpm -C apps/booking dev",
     "build": "pnpm build:packages && pnpm build:apps",
     "build:packages": "pnpm -r --filter \"./packages/*\" build",
     "build:apps": "pnpm -r --filter \"./apps/*\" build",

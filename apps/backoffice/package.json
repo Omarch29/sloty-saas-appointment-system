@@ -10,10 +10,12 @@
     "clean": "rm -rf .next dist"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@sloty/auth": "file:../../packages/auth",
     "@sloty/config": "file:../../packages/config",
     "@sloty/db": "file:../../packages/db",
     "@sloty/ui": "file:../../packages/ui",
+    "@tremor/react": "^3.18.7",
     "next": "^15.4.6",
     "next-auth": "^4.24.0",
     "react": "19.1.0",
