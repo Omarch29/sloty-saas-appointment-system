@@ -1,0 +1,23 @@
+{
+  "id": "development/setup",
+  "title": "Development Setup",
+  "description": "Complete guide for setting up your development environment and contributing to Sloty.",
+  "source": "@site/docs/development/setup.md",
+  "sourceDirName": "development",
+  "slug": "/development/setup",
+  "permalink": "/sloty-saas-appointment-system/docs/development/setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/development/setup.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "API Reference Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/api-reference/overview"
+  }
+}

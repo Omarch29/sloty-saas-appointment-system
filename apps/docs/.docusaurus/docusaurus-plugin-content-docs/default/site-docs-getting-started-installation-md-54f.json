@@ -1,0 +1,27 @@
+{
+  "id": "getting-started/installation",
+  "title": "Installation",
+  "description": "This guide will walk you through setting up Sloty on your local development environment.",
+  "source": "@site/docs/getting-started/installation.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/installation",
+  "permalink": "/sloty-saas-appointment-system/docs/getting-started/installation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/getting-started/installation.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Sloty SaaS Appointment System",
+    "permalink": "/sloty-saas-appointment-system/docs/intro"
+  },
+  "next": {
+    "title": "Configuration",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/configuration"
+  }
+}

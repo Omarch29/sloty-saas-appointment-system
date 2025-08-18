@@ -38,34 +38,21 @@ const sidebars: SidebarsConfig = {
       type: 'category',
       label: 'Core Concepts',
       items: [
-        'concepts/tenants-users',
-        'concepts/providers-locations',
-        'concepts/services-specialties',
-        'concepts/appointments-booking',
-        'concepts/parameters-dependencies',
-        'concepts/slot-engine',
+        'core-concepts/overview',
       ],
     },
     {
       type: 'category',
-      label: 'Authentication & Authorization',
+      label: 'Authentication',
       items: [
-        'auth/overview',
-        'auth/next-auth',
-        'auth/role-based-access',
-        'auth/tenant-isolation',
+        'authentication/overview',
       ],
     },
     {
       type: 'category',
       label: 'API Reference',
       items: [
-        'api/overview',
-        'api/tenants',
-        'api/providers',
-        'api/services',
-        'api/appointments',
-        'api/availability',
+        'api-reference/overview',
       ],
     },
     {
@@ -73,9 +60,6 @@ const sidebars: SidebarsConfig = {
       label: 'Development',
       items: [
         'development/setup',
-        'development/testing',
-        'development/contributing',
-        'development/troubleshooting',
       ],
     },
   ],

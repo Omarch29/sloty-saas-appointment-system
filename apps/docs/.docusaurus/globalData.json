@@ -1,0 +1,93 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/sloty-saas-appointment-system/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/sloty-saas-appointment-system/docs",
+          "mainDocId": "intro",
+          "docs": [
+            {
+              "id": "api-reference/overview",
+              "path": "/sloty-saas-appointment-system/docs/api-reference/overview",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/data-model",
+              "path": "/sloty-saas-appointment-system/docs/architecture/data-model",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/monorepo-structure",
+              "path": "/sloty-saas-appointment-system/docs/architecture/monorepo-structure",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/multi-tenancy",
+              "path": "/sloty-saas-appointment-system/docs/architecture/multi-tenancy",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/overview",
+              "path": "/sloty-saas-appointment-system/docs/architecture/overview",
+              "sidebar": "docs"
+            },
+            {
+              "id": "authentication/overview",
+              "path": "/sloty-saas-appointment-system/docs/authentication/overview",
+              "sidebar": "docs"
+            },
+            {
+              "id": "core-concepts/overview",
+              "path": "/sloty-saas-appointment-system/docs/core-concepts/overview",
+              "sidebar": "docs"
+            },
+            {
+              "id": "development/setup",
+              "path": "/sloty-saas-appointment-system/docs/development/setup",
+              "sidebar": "docs"
+            },
+            {
+              "id": "getting-started/configuration",
+              "path": "/sloty-saas-appointment-system/docs/getting-started/configuration",
+              "sidebar": "docs"
+            },
+            {
+              "id": "getting-started/deployment",
+              "path": "/sloty-saas-appointment-system/docs/getting-started/deployment",
+              "sidebar": "docs"
+            },
+            {
+              "id": "getting-started/first-tenant",
+              "path": "/sloty-saas-appointment-system/docs/getting-started/first-tenant",
+              "sidebar": "docs"
+            },
+            {
+              "id": "getting-started/installation",
+              "path": "/sloty-saas-appointment-system/docs/getting-started/installation",
+              "sidebar": "docs"
+            },
+            {
+              "id": "intro",
+              "path": "/sloty-saas-appointment-system/docs/intro",
+              "sidebar": "docs"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "docs": {
+              "link": {
+                "path": "/sloty-saas-appointment-system/docs/intro",
+                "label": "intro"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

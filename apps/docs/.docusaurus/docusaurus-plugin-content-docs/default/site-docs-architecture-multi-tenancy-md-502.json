@@ -1,0 +1,27 @@
+{
+  "id": "architecture/multi-tenancy",
+  "title": "Multi-Tenancy",
+  "description": "Sloty implements a robust multi-tenant architecture ensuring complete data isolation and security between different organizations.",
+  "source": "@site/docs/architecture/multi-tenancy.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/multi-tenancy",
+  "permalink": "/sloty-saas-appointment-system/docs/architecture/multi-tenancy",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/architecture/multi-tenancy.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Data Model",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/data-model"
+  },
+  "next": {
+    "title": "Core Concepts Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/core-concepts/overview"
+  }
+}

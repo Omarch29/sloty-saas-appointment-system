@@ -1,0 +1,27 @@
+{
+  "id": "getting-started/first-tenant",
+  "title": "Creating Your First Tenant",
+  "description": "Learn how to set up your first tenant organization and configure it for appointment booking.",
+  "source": "@site/docs/getting-started/first-tenant.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/first-tenant",
+  "permalink": "/sloty-saas-appointment-system/docs/getting-started/first-tenant",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/getting-started/first-tenant.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Configuration",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/configuration"
+  },
+  "next": {
+    "title": "Deployment Guide",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/deployment"
+  }
+}

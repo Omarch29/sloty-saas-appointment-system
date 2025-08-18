@@ -1,0 +1,27 @@
+{
+  "id": "core-concepts/overview",
+  "title": "Core Concepts Overview",
+  "description": "Understanding the fundamental concepts that power Sloty's appointment booking system.",
+  "source": "@site/docs/core-concepts/overview.md",
+  "sourceDirName": "core-concepts",
+  "slug": "/core-concepts/overview",
+  "permalink": "/sloty-saas-appointment-system/docs/core-concepts/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/core-concepts/overview.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Multi-Tenancy",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/multi-tenancy"
+  },
+  "next": {
+    "title": "Authentication Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/authentication/overview"
+  }
+}

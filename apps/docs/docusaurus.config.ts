@@ -58,12 +58,12 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'docs',
           position: 'left',
           label: 'Documentation',
         },
         {
-          href: 'https://github.com/your-org/sloty-saas-appointment-system',
+          href: 'https://github.com/Omarch29/sloty-saas-appointment-system',
           label: 'GitHub',
           position: 'right',
         },
@@ -86,7 +86,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/your-org/sloty-saas-appointment-system',
+              href: 'https://github.com/Omarch29/sloty-saas-appointment-system',
             },
           ],
         },

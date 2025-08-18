@@ -1,0 +1,27 @@
+{
+  "id": "architecture/data-model",
+  "title": "Data Model",
+  "description": "Sloty's database schema is designed for multi-tenancy, scalability, and flexibility using PostgreSQL with Prisma ORM.",
+  "source": "@site/docs/architecture/data-model.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/data-model",
+  "permalink": "/sloty-saas-appointment-system/docs/architecture/data-model",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/architecture/data-model.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Monorepo Structure",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/monorepo-structure"
+  },
+  "next": {
+    "title": "Multi-Tenancy",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/multi-tenancy"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "authentication/overview",
+  "title": "Authentication Overview",
+  "description": "Sloty uses NextAuth.js for secure, flexible authentication with support for multiple providers and robust session management.",
+  "source": "@site/docs/authentication/overview.md",
+  "sourceDirName": "authentication",
+  "slug": "/authentication/overview",
+  "permalink": "/sloty-saas-appointment-system/docs/authentication/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/authentication/overview.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Core Concepts Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/core-concepts/overview"
+  },
+  "next": {
+    "title": "API Reference Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/api-reference/overview"
+  }
+}

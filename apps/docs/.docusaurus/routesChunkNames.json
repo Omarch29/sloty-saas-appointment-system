@@ -1,0 +1,110 @@
+{
+  "/sloty-saas-appointment-system/__docusaurus/debug-4c8": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/config-c5b": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/content-3d3": {
+    "__comp": "__comp---theme-debug-contentba-8-ce7",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    },
+    "__props": "__props---sloty-saas-appointment-system-docusaurus-debug-content-3-b-4-827"
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/globalData-a2b": {
+    "__comp": "__comp---theme-debug-global-dataede-0fa",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/metadata-1b3": {
+    "__comp": "__comp---theme-debug-site-metadata-68-e-3d4",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/registry-cdb": {
+    "__comp": "__comp---theme-debug-registry-679-501",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/__docusaurus/debug/routes-6b9": {
+    "__comp": "__comp---theme-debug-routes-946-699",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docusaurus-debugb-38-cf3"
+    }
+  },
+  "/sloty-saas-appointment-system/docs-48e": {
+    "__comp": "__comp---theme-docs-root-5-e-9-0b6",
+    "__context": {
+      "plugin": "plugin---sloty-saas-appointment-system-docsaba-aac"
+    }
+  },
+  "/sloty-saas-appointment-system/docs-170": {
+    "__comp": "__comp---theme-doc-version-roota-7-b-5de",
+    "__props": "__props---sloty-saas-appointment-system-docs-811-8a4"
+  },
+  "/sloty-saas-appointment-system/docs-b67": {
+    "__comp": "__comp---theme-doc-roota-94-67a"
+  },
+  "/sloty-saas-appointment-system/docs/api-reference/overview-7aa": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-api-reference-overviewce-8-25e"
+  },
+  "/sloty-saas-appointment-system/docs/architecture/data-model-dd8": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-architecture-data-model-46-c-3df"
+  },
+  "/sloty-saas-appointment-system/docs/architecture/monorepo-structure-ca5": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-architecture-monorepo-structure-507-5ef"
+  },
+  "/sloty-saas-appointment-system/docs/architecture/multi-tenancy-520": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-architecture-multi-tenancy-502-bec"
+  },
+  "/sloty-saas-appointment-system/docs/architecture/overview-d4c": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-architecture-overview-0-b-1-ba1"
+  },
+  "/sloty-saas-appointment-system/docs/authentication/overview-4e0": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-authentication-overviewbe-1-823"
+  },
+  "/sloty-saas-appointment-system/docs/core-concepts/overview-b14": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-core-concepts-overviewff-3-56e"
+  },
+  "/sloty-saas-appointment-system/docs/development/setup-e7c": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-development-setupe-62-a19"
+  },
+  "/sloty-saas-appointment-system/docs/getting-started/configuration-b59": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-getting-started-configuration-009-661"
+  },
+  "/sloty-saas-appointment-system/docs/getting-started/deployment-f5b": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-getting-started-deployment-276-5b9"
+  },
+  "/sloty-saas-appointment-system/docs/getting-started/first-tenant-6ef": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-getting-started-first-tenant-48-d-062"
+  },
+  "/sloty-saas-appointment-system/docs/getting-started/installation-48a": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-getting-started-installation-54-f-2ac"
+  },
+  "/sloty-saas-appointment-system/docs/intro-22b": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---sloty-saas-appointment-system-docs-intro-0-e-3-a76"
+  }
+}

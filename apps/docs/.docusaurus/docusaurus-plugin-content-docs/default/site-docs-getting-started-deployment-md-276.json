@@ -1,0 +1,27 @@
+{
+  "id": "getting-started/deployment",
+  "title": "Deployment Guide",
+  "description": "Learn how to deploy Sloty to production environments with confidence.",
+  "source": "@site/docs/getting-started/deployment.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/deployment",
+  "permalink": "/sloty-saas-appointment-system/docs/getting-started/deployment",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/getting-started/deployment.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Creating Your First Tenant",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/first-tenant"
+  },
+  "next": {
+    "title": "Architecture Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/overview"
+  }
+}

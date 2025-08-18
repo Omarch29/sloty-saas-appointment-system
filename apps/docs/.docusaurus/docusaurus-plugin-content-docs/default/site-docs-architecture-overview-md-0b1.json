@@ -1,0 +1,27 @@
+{
+  "id": "architecture/overview",
+  "title": "Architecture Overview",
+  "description": "Sloty is designed as a modern, scalable multi-tenant SaaS application with a microservice-oriented monorepo architecture.",
+  "source": "@site/docs/architecture/overview.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/overview",
+  "permalink": "/sloty-saas-appointment-system/docs/architecture/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/architecture/overview.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Deployment Guide",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/deployment"
+  },
+  "next": {
+    "title": "Monorepo Structure",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/monorepo-structure"
+  }
+}

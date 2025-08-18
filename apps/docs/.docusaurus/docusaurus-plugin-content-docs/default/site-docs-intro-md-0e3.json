@@ -1,0 +1,23 @@
+{
+  "id": "intro",
+  "title": "Sloty SaaS Appointment System",
+  "description": "Welcome to Sloty, a comprehensive multi-tenant SaaS appointment booking system built with modern web technologies.",
+  "source": "@site/docs/intro.md",
+  "sourceDirName": ".",
+  "slug": "/intro",
+  "permalink": "/sloty-saas-appointment-system/docs/intro",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/intro.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "next": {
+    "title": "Installation",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/installation"
+  }
+}

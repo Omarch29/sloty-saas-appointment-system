@@ -1,0 +1,27 @@
+{
+  "id": "architecture/monorepo-structure",
+  "title": "Monorepo Structure",
+  "description": "Sloty uses a monorepo architecture with Turbo for build optimization and shared packages for code reuse.",
+  "source": "@site/docs/architecture/monorepo-structure.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/monorepo-structure",
+  "permalink": "/sloty-saas-appointment-system/docs/architecture/monorepo-structure",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/architecture/monorepo-structure.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Architecture Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/overview"
+  },
+  "next": {
+    "title": "Data Model",
+    "permalink": "/sloty-saas-appointment-system/docs/architecture/data-model"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "getting-started/configuration",
+  "title": "Configuration",
+  "description": "Learn how to configure Sloty for your specific needs and environment.",
+  "source": "@site/docs/getting-started/configuration.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/configuration",
+  "permalink": "/sloty-saas-appointment-system/docs/getting-started/configuration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/getting-started/configuration.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Installation",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/installation"
+  },
+  "next": {
+    "title": "Creating Your First Tenant",
+    "permalink": "/sloty-saas-appointment-system/docs/getting-started/first-tenant"
+  }
+}

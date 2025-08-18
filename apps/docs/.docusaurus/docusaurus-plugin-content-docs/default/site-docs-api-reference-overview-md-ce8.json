@@ -1,0 +1,27 @@
+{
+  "id": "api-reference/overview",
+  "title": "API Reference Overview",
+  "description": "Comprehensive API documentation for integrating with the Sloty appointment booking system.",
+  "source": "@site/docs/api-reference/overview.md",
+  "sourceDirName": "api-reference",
+  "slug": "/api-reference/overview",
+  "permalink": "/sloty-saas-appointment-system/docs/api-reference/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/Omarch29/sloty-saas-appointment-system/tree/main/apps/docs/docs/api-reference/overview.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Authentication Overview",
+    "permalink": "/sloty-saas-appointment-system/docs/authentication/overview"
+  },
+  "next": {
+    "title": "Development Setup",
+    "permalink": "/sloty-saas-appointment-system/docs/development/setup"
+  }
+}
